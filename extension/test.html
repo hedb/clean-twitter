@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <script lang="javascript">
+            var blacklist = [];
+            fetch('https://public-twitter-blacklist.s3.eu-central-1.amazonaws.com/blacklist.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // The data is the content of the file
+                    blacklist = data.split('\n');
+                    console.log('Blacklist loaded:', blacklist);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        </script>
+    </head>
+    <body>
+        TEST
+    </body>
+</html>
