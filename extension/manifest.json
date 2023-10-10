@@ -6,6 +6,7 @@
     "https://twitter.com/*",
     "https://public-twitter-blacklist.s3.eu-central-1.amazonaws.com/*"
   ],
+  "permissions": ["storage"],
   "action": {
     "default_icon": {
       "128": "icons/clean.png"

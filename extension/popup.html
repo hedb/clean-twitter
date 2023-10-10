@@ -1,3 +1,85 @@
+<!DOCTYPE html>
 <html>
-    POPUP
+<head>
+    <title>Popup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #container {
+            background-color: #fff;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            padding: 0 10px;
+        }
+        input, select, button {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005f5f;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Configured Lists</h1>
+        <div>
+            <table id="listsTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>ID (Optional)</th>
+                </tr>
+                <!-- Existing lists will be populated here -->
+            </table>
+        </div>
+        <h2>Add New</h2>
+        <form id="listForm">
+            <input type="text" id="listName" placeholder="List Name" required>
+            <select id="listType">
+                <option value="whitelist">Whitelist</option>
+                <option value="blacklist">Blacklist</option>
+            </select>
+            <input type="text" id="listID" placeholder="List ID (Optional)">
+            <button type="submit">Add New</button>
+        </form>
+    </div>
+    <script src="popup.js"></script>
+</body>
 </html>
