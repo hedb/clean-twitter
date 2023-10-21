@@ -1,23 +1,28 @@
 import aws_cdk as cdk
 from constructs import Construct
 from aws_cdk import (aws_apigateway as apigateway,
-                     aws_s3 as s3,
-                     aws_lambda as lambda_)
+                    aws_dynamodb as dynamodb,
+                    aws_lambda as lambda_)
 
 class GetAvailableModerationListsService(Construct):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
 
         # bucket = s3.Bucket(self, "WidgetStore")
+        dynamoDB_table = dynamodb.Table(self, "get-available-moderation-lists",
+                    partition_key=dynamodb.Attribute(name="primaryID", type=dynamodb.AttributeType.STRING),
+                    table_name="moderation-lists",
+                    removal_policy=cdk.RemovalPolicy.DESTROY
+        )
 
         handler = lambda_.Function(self, "get-available-moderation-lists-lambda",
                     runtime=lambda_.Runtime.PYTHON_3_11,
                     code=lambda_.Code.from_asset("get_available_moderation_lists_lambda"),
                     handler="lambda.main_handler"
-                    # ,environment=dict( BUCKET=bucket.bucket_name)
-                    )
+                    ,environment=dict( TABLE_NAME=dynamoDB_table.table_name)
+        )
 
-        # bucket.grant_read_write(handler)
+        dynamoDB_table.grant_read_data(handler)
 
         api = apigateway.RestApi(self, "get-available-moderation-list-api",
                   rest_api_name="get-available-moderation-lists_name",
