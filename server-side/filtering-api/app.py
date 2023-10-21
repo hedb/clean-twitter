@@ -1,10 +1,28 @@
 #!/usr/bin/env python3
+import os
 
-from aws_cdk import core
+import aws_cdk as cdk
 
-from cdk.filteringapistack import FilteringAPIStack  # Importing the stack class from your module
+from filtering_api.filtering_api_stack import FilteringApiStack
 
-app = core.App()
-FilteringAPIStack(app, "FilteringAPIStack")  # Initializing your stack
 
-app.synth()  # Synthesizes an AWS CloudFormation template for the defined app
+app = cdk.App()
+FilteringApiStack(app, "FilteringApiStack",
+    # If you don't specify 'env', this stack will be environment-agnostic.
+    # Account/Region-dependent features and context lookups will not work,
+    # but a single synthesized template can be deployed anywhere.
+
+    # Uncomment the next line to specialize this stack for the AWS Account
+    # and Region that are implied by the current CLI configuration.
+
+    # env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+
+    # Uncomment the next line if you know exactly what Account and Region you
+    # want to deploy the stack to. */
+
+    env=cdk.Environment(account='924977556747', region='eu-central-1'),
+
+    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+    )
+
+app.synth()
