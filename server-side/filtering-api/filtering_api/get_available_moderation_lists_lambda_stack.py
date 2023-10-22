@@ -8,8 +8,7 @@ class GetAvailableModerationListsService(Construct):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
 
-        # bucket = s3.Bucket(self, "WidgetStore")
-        dynamoDB_table = dynamodb.Table(self, "get-available-moderation-lists",
+        dynamoDB_table = dynamodb.Table(self, "available-moderation-lists",
                     partition_key=dynamodb.Attribute(name="primaryID", type=dynamodb.AttributeType.STRING),
                     table_name="moderation-lists",
                     removal_policy=cdk.RemovalPolicy.DESTROY
