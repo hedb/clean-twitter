@@ -3,37 +3,20 @@ import json
 import os
 import boto3
 import traceback
-from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
+from common_src.moderation_lists_util import extract_moderation_lists_from_db
 
 table = None
 
-def validate_moderation_list(moderation_list):
-    if moderation_list['type'].lower() not in ['blacklist', 'whitelist']:
-        raise Exception('Invalid moderation list type: ' + moderation_list['type'])
 
 
 def main_handler(event, context):
     # Get the discourse-provider-id from the query string
     discourse_provider_id = event['queryStringParameters']['discourse-provider-id']
 
-    error_msg = ''
+    error_msgs = []
     try:
-        # Query the table
-        response = table.query(
-            KeyConditionExpression=Key('primaryID').eq(discourse_provider_id)
-        )
-        # Create a list of moderation lists
-        moderation_lists = []
-        for item in response['Items']:
-            moderation_lists.append({
-                'id': discourse_provider_id,
-                'name': item['name'],
-                'type': item['type'],
-                'description': item['description'],
-                'metadata': item.get('metadata', {})  # Assuming metadata is optional
-            })
-            validate_moderation_list(moderation_lists[-1])
+        moderation_lists = extract_moderation_lists_from_db(table,discourse_provider_id)
 
         # Return the successful response
         return {
@@ -41,14 +24,14 @@ def main_handler(event, context):
             'body': json.dumps({'status': 'OK', 'lists': moderation_lists})
         }
     except ClientError as e:
-        error_msg = e.response['Error']['Message']
-        traceback.print_exc()
+        error_msgs.append(e.response['Error']['Message'])
+        error_msgs.append(traceback.format_exc())
     except Exception as e:
-        error_msg = str(type(e)) + ': ' + str(e)
-        traceback.print_exc()
-    return {
+        error_msgs.append(str(type(e)) + ': ' + str(e))
+        error_msgs.append(traceback.format_exc())
+    return  {
         'statusCode': 500,
-        'body': json.dumps({'status': 'FAILED', 'error_msg': error_msg})
+        'body': {'status': 'FAILED', 'error_msgs': error_msgs}
     }
 
 
@@ -69,18 +52,31 @@ def local_tasts():
     table = MockDynamoDBTable([])
     res = main_handler(event, None)
     assert res['statusCode'] == 200
+    assert 'error_msgs' not in res['body']
 
     table = MockDynamoDBTable([{}])
+    event['queryStringParameters']['discourse-provider-id'] = '124'
     res = main_handler(event, None)
     assert res['statusCode'] == 500
+    assert res['body']['error_msgs'][0] == "<class 'KeyError'>: 'name'"
 
     table = MockDynamoDBTable([{'name':'X','type':'--','description':'Y'}])
+    event['queryStringParameters']['discourse-provider-id'] = '125'
     res = main_handler(event, None)
     assert res['statusCode'] == 500
+    assert res['body']['error_msgs'][0] == "<class 'Exception'>: Invalid moderation list type: --"
 
-    table = MockDynamoDBTable([{'name': 'X', 'type': 'BlackLIst', 'description': 'Y'}])
+    table = MockDynamoDBTable([{'name': 'X', 'type': 'BlackLIst', 'description': 'List1'}])
+    event['queryStringParameters']['discourse-provider-id'] = '125'
+    res = main_handler(event, None)
+    assert res['statusCode'] == 200 # the 125 was not save in the cache because of exception. Now it is saved
+    assert "List1" in res['body']
+
+    table = MockDynamoDBTable([{'name': 'X', 'type': 'BlackLIst', 'description': 'List2'}])
+    event['queryStringParameters']['discourse-provider-id'] = '125'
     res = main_handler(event, None)
     assert res['statusCode'] == 200
+    assert "List1" in res['body'] # Now it is saved and we get List1
 
     print ('All tests passed')
 
