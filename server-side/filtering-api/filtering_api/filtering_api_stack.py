@@ -12,4 +12,5 @@ class FilteringApiStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         get_available_moderation_lists_lambda_stack.GetAvailableModerationListsService(self, "get-available-moderation-lists")
-        crosscheck_userids_vs_lists_lambda_stack.CrosscheckUserids_VS_ListsService(self, "crosscheck-userids-vs-lists")
+
+        # crosscheck_userids_vs_lists_lambda_stack.CrosscheckUserids_VS_ListsService(self, "crosscheck-userids-vs-lists")
