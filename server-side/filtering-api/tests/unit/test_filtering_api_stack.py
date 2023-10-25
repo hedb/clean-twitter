@@ -1,10 +1,10 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
-from filtering_api.filtering_api_stack import FilteringApiStack
+from filtering_api_stack.filtering_api_stack import FilteringApiStack
 
 # example tests. To run these tests, uncomment this file along with the example
-# resource in filtering_api/filtering_api_stack.py
+# resource in filtering_api_stack/filtering_api_stack.py
 def test_sqs_queue_created():
     app = core.App()
     stack = FilteringApiStack(app, "filtering-api")

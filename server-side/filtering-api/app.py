@@ -3,7 +3,7 @@ import os
 
 import aws_cdk as cdk
 
-from filtering_api.filtering_api_stack import FilteringApiStack
+from filtering_api_stack.filtering_api_stack import FilteringApiStack
 
 
 app = cdk.App()

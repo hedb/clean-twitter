@@ -1,10 +1,19 @@
 
 import json
+
 import os
+LOCAL_ENV = 'HOME' in os.environ and '/Users/' in os.environ['HOME']
+
 import boto3
 import traceback
 from botocore.exceptions import ClientError
+
 from common_src.moderation_lists_util import extract_moderation_lists_from_db
+
+if not LOCAL_ENV:
+    import sys
+    sys.path.append('/opt') # to enable the import of common_src from the lambda layer
+
 
 table = None
 
@@ -81,7 +90,7 @@ def local_tasts():
     print ('All tests passed')
 
 
-LOCAL_ENV = 'HOME' in os.environ and '/Users/' in os.environ['HOME']
+
 if LOCAL_ENV:
     os.environ['TABLE_NAME'] = 'moderation-lists'
 else:
