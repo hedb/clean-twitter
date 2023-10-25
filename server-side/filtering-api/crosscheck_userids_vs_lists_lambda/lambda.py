@@ -1,93 +1,92 @@
-import os
 import json
+import os
+
 import boto3
 from boto3.dynamodb.conditions import Key
 
-from common_src.moderation_lists_util import extract_moderation_lists_from_db
+import common_src.moderation_lists_util as moderation_lists_util
 
-# Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('moderation_lists')  # assuming this is your table name
+list_user_mapping_table = dynamodb.Table(os.environ['TABLE_NAME'])
+moderation_list_table = None
 
 
 def isolate_blacklists(discourse_provider_id, id_list):
-    moderation_lists = extract_moderation_lists_from_db(moderation_lists_table, discourse_provider_id)
-    filtered_blacklists = [item for item in moderation_lists if item['type'] == 'blacklist' and item['id'] in id_list]
-    filtered_blacklist_ids = [item['id'] for item in filtered_blacklists]
-    return filtered_blacklist_ids
+    moderation_lists = moderation_lists_util.extract_moderation_lists_from_db(discourse_provider_id,
+                                                                              QA_injected_table=moderation_list_table)
+    filtered_blacklists = [item['list_id'] for item in moderation_lists if
+                           item['type'].lower() == 'blacklist' and item['list_id'] in id_list]
+    return filtered_blacklists
 
 
-def lambda_handler(event, context):
-    # Parse the JSON input to get the lists of user IDs and list IDs
+def main_handler(event, context):
+    global moderation_list_table
+    global list_user_mapping
+
     try:
-        body = json.loads(event['body'])
-        discourse_provider_id = ['discourse-provider-id']
-        user_ids = body['userIds']
-        list_ids = body['listIds']
-    except KeyError or json.JSONDecodeError:
+        body = event
+        discourse_provider_id = body['discourse-provider-id']
+        user_ids = body['user_ids']
+        list_ids = body['list_ids']
+    except (KeyError, json.JSONDecodeError, Exception):
         return {
             'statusCode': 400,
-            'body': json.dumps({'status': 'FAILED', 'error_msg': 'Invalid input format'})
+            'body': json.dumps({'status': 'FAILED', 'error_msg': 'Invalid input format'}),
+            'input_event': str(event),
+            'input_event_type': str(type(event))
         }
 
-    blcklists = isolate_blacklists(discourse_provider_id,list_ids)
+    blacklists = isolate_blacklists(discourse_provider_id, list_ids)
 
-    list_match = []
-    for list_id in list_ids:
-        matches = []
-        for user_id in user_ids:
-            response = table.query(
-                KeyConditionExpression=Key('listId').eq(list_id) & Key('userId').eq(user_id)
-            )
-            if response['Items']:
-                matches.append(user_id)
-
-        if matches:
-            list_match.append({
-                'list_id': list_id,
-                'matches': matches
-            })
+    blacklisted_users = []
+    for user_id in user_ids:
+        response = list_user_mapping_table.query(
+            KeyConditionExpression=Key('user_id').eq(user_id)
+        )
+        if response['Items']:
+            if any(item['list_id'] in blacklists for item in response['Items']):
+                blacklisted_users.append(user_id)
 
     return {
         'statusCode': 200,
-        'body': json.dumps({'status': 'OK', 'list_match': list_match})
+        'body': json.dumps({'status': 'OK', 'blacklisted_users': blacklisted_users})
     }
 
 
-
-
 class MockDynamoDBTable:
-    def __init__(self,mock_returned_rs):
+    def __init__(self, mock_returned_rs):
         self.mock_returned_rs = mock_returned_rs
-    def query(self,KeyConditionExpression):
-        list_id = KeyConditionExpression._values[0]._values[1]
-        user_id = KeyConditionExpression._values[1]._values[1]
-        return {'Items':self.mock_returned_rs.get(str(list_id)+'_'+str(user_id),None) }
+
+    def query(self, KeyConditionExpression):
+        user_id = KeyConditionExpression._values[1]
+        return {'Items': self.mock_returned_rs.get(str(user_id), None)}
+
 
 def local_tasts():
-    global table
+    global moderation_list_table
+    moderation_list_table = moderation_lists_util.MockDynamoDBTable(
+        [{'name': 'X', 'list_id': '1', 'type': 'BlackLIst', 'description': 'X'},
+         {'name': 'Y', 'list_id': '2', 'type': 'Whitelist', 'description': 'Y'}
+         ])
+    global list_user_mapping_table
 
-    table = MockDynamoDBTable({})
-    res = lambda_handler({'body':json.dumps({'userIds':['1','2','3'],'listIds':['1','2','3']})},None)
+    input_event = {"discourse-provider-id": "1", "user_ids": ["1", "2", "3"], "list_ids": ["1", "2", "3"]}
+
+    list_user_mapping_table = MockDynamoDBTable({})
+    res = main_handler(json.dumps(input_event), None)
     assert res['statusCode'] == 200
 
-    table = MockDynamoDBTable({'1_3':True})
-    res = lambda_handler({'body':json.dumps({'userIds':['1','2','3'],'listIds':['1','2','3']})},None)
+    list_user_mapping_table = MockDynamoDBTable({'3': [{'list_id': '1', 'user_id': '3'}]})
+    res = main_handler(json.dumps(input_event), None)
     assert res['statusCode'] == 200
+    assert json.loads(res['body'])['blacklisted_users'] == ['3']
 
-    table = MockDynamoDBTable({'1_2': True,'1_3': True})
-    res = lambda_handler({'body': json.dumps({'userIds': ['1', '2', '3'], 'listIds': ['1', '2', '3']})}, None)
-    assert len(json.loads(res['body'])['list_match'][0]['matches']) == 2
+    list_user_mapping_table = MockDynamoDBTable({'3': [{'list_id': '2', 'user_id': '3'}]})
+    res = main_handler(json.dumps(input_event), None)
+    assert res['statusCode'] == 200
+    assert json.loads(res['body'])['blacklisted_users'] == []
 
-    table = MockDynamoDBTable({'1_2': True, '1_3': True, '1_4': True})
-    res = lambda_handler({'body': json.dumps({'userIds': ['1', '2', '3'], 'listIds': ['1', '2', '3']})}, None)
-    assert len(json.loads(res['body'])['list_match'][0]['matches']) == 2
-
-    # print(res)
     print(' ALl Tests Passed')
-
-
-
 
 
 LOCAL_ENV = 'HOME' in os.environ and '/Users/' in os.environ['HOME']
@@ -96,10 +95,8 @@ if LOCAL_ENV:
 else:
     # Initialize DynamoDB client
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ['TABLE_NAME'])  # The DynamoDB table name is stored in Lambda environment variables
-
-
+    table = dynamodb.Table(
+        os.environ['TABLE_NAME'])  # The DynamoDB table name is stored in Lambda environment variables
 
 if __name__ == '__main__':
     local_tasts()
-

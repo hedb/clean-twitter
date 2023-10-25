@@ -8,11 +8,9 @@ LOCAL_ENV = 'HOME' in os.environ and '/Users/' in os.environ['HOME']
 
 moderation_list_cache = TTLCache(maxsize=5, ttl=60 * 60)
 
-if LOCAL_ENV:
-    os.environ['TABLE_NAME'] = 'moderation-lists'
-
+TABLE_NAME = "moderation-lists"
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ['TABLE_NAME'])  # The DynamoDB table name is stored in Lambda environment variables
+table = dynamodb.Table(TABLE_NAME)  # The DynamoDB table name is stored in Lambda environment variables
 
 
 def validate_moderation_list(moderation_list):
@@ -35,7 +33,8 @@ def extract_moderation_lists_from_db(discourse_provider_id, QA_injected_table=No
     moderation_lists = []
     for item in response['Items']:
         moderation_lists.append({
-            'id': discourse_provider_id,
+            'provider_id': discourse_provider_id,
+            'list_id': item['list_id'],
             'name': item['name'],
             'type': item['type'],
             'description': item['description'],
@@ -43,3 +42,11 @@ def extract_moderation_lists_from_db(discourse_provider_id, QA_injected_table=No
         })
         validate_moderation_list(moderation_lists[-1])
     return moderation_lists
+
+
+class MockDynamoDBTable:
+    def __init__(self, mock_returned_rs):
+        self.mock_returned_rs = mock_returned_rs
+
+    def query(self, KeyConditionExpression):
+        return {'Items': self.mock_returned_rs}
