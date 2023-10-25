@@ -4,19 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21e2486c-7069-46fd-9952-e06b811603dd" name="Changes" comment="Sorted some ID issue">
-      <change afterPath="$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements_lambda_layer.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="21e2486c-7069-46fd-9952-e06b811603dd" name="Changes" comment="Working Layer deployment for one function">
+      <change afterPath="$PROJECT_DIR$/.flake8" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api/crosscheck_userids_vs_lists_lambda_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/crosscheck_userids_vs_lists_lambda_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api/filtering_api_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/filtering_api_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api/get_available_moderation_lists_lambda_stack.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common_src/moderation_lists_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_src/moderation_lists_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py" beforeDir="false" afterPath="$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/filtering_api_stack/filtering_api_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/filtering_api_stack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit/test_filtering_api_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_filtering_api_stack.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +64,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.get_available_moderation_lists_lambda_stack">
+  <component name="RunManager" selected="Python.lambda">
     <configuration name="get_available_moderation_lists_lambda_stack" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="filtering-api" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -136,15 +131,39 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="moderation_lists_util" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="filtering-api" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/common_src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/common_src/moderation_lists_util.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Python.moderation_lists_util" />
       <item itemvalue="Python.get_available_moderation_lists_lambda_stack" />
       <item itemvalue="Python.lambda" />
       <item itemvalue="Python.lambda (1)" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.get_available_moderation_lists_lambda_stack" />
         <item itemvalue="Python.lambda" />
+        <item itemvalue="Python.moderation_lists_util" />
+        <item itemvalue="Python.get_available_moderation_lists_lambda_stack" />
         <item itemvalue="Python.lambda (1)" />
       </list>
     </recent_temporary>
@@ -160,7 +179,7 @@
       <workItem from="1697479983362" duration="1245000" />
       <workItem from="1697651726561" duration="4032000" />
       <workItem from="1697812317567" duration="12829000" />
-      <workItem from="1698141674293" duration="9332000" />
+      <workItem from="1698141674293" duration="13118000" />
     </task>
     <task id="LOCAL-00001" summary=".1">
       <option name="closed" value="true" />
@@ -226,7 +245,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698178227341</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Working Layer deployment for one function">
+      <option name="closed" value="true" />
+      <created>1698225140853</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1698225140854</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,7 +267,8 @@
     <MESSAGE value="initial version of crosscheck API" />
     <MESSAGE value="Added cache to get moderation list" />
     <MESSAGE value="Sorted some ID issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="Sorted some ID issue" />
+    <MESSAGE value="Working Layer deployment for one function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working Layer deployment for one function" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -252,25 +280,36 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py</url>
-          <line>73</line>
+          <line>85</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py</url>
-          <line>16</line>
+          <line>15</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py</url>
-          <line>35</line>
+          <line>34</line>
           <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py</url>
+          <line>17</line>
+          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/filtering_api$get_available_moderation_lists_lambda_stack.coverage" NAME="get_available_moderation_lists_lambda_stack Coverage Results" MODIFIED="1698224718362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/filtering_api$lambda.coverage" NAME="lambda Coverage Results" MODIFIED="1698162623915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/get_available_moderation_lists_lambda" />
+    <SUITE FILE_PATH="coverage/filtering_api$lambda.coverage" NAME="lambda Coverage Results" MODIFIED="1698232631381" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/get_available_moderation_lists_lambda" />
     <SUITE FILE_PATH="coverage/filtering_api$lambda__1_.coverage" NAME="lambda (1) Coverage Results" MODIFIED="1698142200260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda" />
+    <SUITE FILE_PATH="coverage/filtering_api$moderation_lists_util.coverage" NAME="moderation_lists_util Coverage Results" MODIFIED="1698226842733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/common_src" />
   </component>
 </project>

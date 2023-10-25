@@ -3,15 +3,25 @@ import json
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from common_src.moderation_lists_util import extract_moderation_lists_from_db
+
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('moderation_lists')  # assuming this is your table name
+
+
+def isolate_blacklists(discourse_provider_id, id_list):
+    moderation_lists = extract_moderation_lists_from_db(moderation_lists_table, discourse_provider_id)
+    filtered_blacklists = [item for item in moderation_lists if item['type'] == 'blacklist' and item['id'] in id_list]
+    filtered_blacklist_ids = [item['id'] for item in filtered_blacklists]
+    return filtered_blacklist_ids
 
 
 def lambda_handler(event, context):
     # Parse the JSON input to get the lists of user IDs and list IDs
     try:
         body = json.loads(event['body'])
+        discourse_provider_id = ['discourse-provider-id']
         user_ids = body['userIds']
         list_ids = body['listIds']
     except KeyError or json.JSONDecodeError:
@@ -19,6 +29,8 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': json.dumps({'status': 'FAILED', 'error_msg': 'Invalid input format'})
         }
+
+    blcklists = isolate_blacklists(discourse_provider_id,list_ids)
 
     list_match = []
     for list_id in list_ids:

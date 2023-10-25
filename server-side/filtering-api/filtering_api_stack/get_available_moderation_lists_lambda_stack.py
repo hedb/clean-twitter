@@ -3,9 +3,8 @@ import shutil
 import aws_cdk as cdk
 from constructs import Construct
 from aws_cdk import (aws_apigateway as apigateway,
-                    aws_dynamodb as dynamodb,
-                    aws_lambda as lambda_)
-
+                     aws_dynamodb as dynamodb,
+                     aws_lambda as lambda_)
 
 
 def package_layer():
@@ -35,16 +34,17 @@ def package_layer():
     # Step 6: Copy layer_common_src into layer_deployment
     shutil.copytree("common_src", os.path.join("layer_deployment/python", "common_src"))
 
+
 class GetAvailableModerationListsService(Construct):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
 
-
         dynamoDB_table = dynamodb.Table(self, "get-available-moderation-lists",
-                    partition_key=dynamodb.Attribute(name="primaryID", type=dynamodb.AttributeType.STRING),
-                    table_name="moderation-lists",
-                    removal_policy=cdk.RemovalPolicy.RETAIN
-        )
+                                        partition_key=dynamodb.Attribute(name="primaryID",
+                                                                         type=dynamodb.AttributeType.STRING),
+                                        table_name="moderation-lists",
+                                        removal_policy=cdk.RemovalPolicy.RETAIN
+                                        )
 
         package_layer()
 
@@ -73,5 +73,5 @@ class GetAvailableModerationListsService(Construct):
 
         api.root.add_method("GET", get_available_moderation_lists_lambda_integration)   # GET /
 
-if __name__ == '__main__':
-    package_layer()
+# if __name__ == '__main__':
+#     package_layer()

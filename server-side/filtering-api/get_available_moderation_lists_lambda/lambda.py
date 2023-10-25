@@ -1,31 +1,21 @@
 
 import json
-
-import os
-LOCAL_ENV = 'HOME' in os.environ and '/Users/' in os.environ['HOME']
-
-import boto3
 import traceback
 from botocore.exceptions import ClientError
 
 from common_src.moderation_lists_util import extract_moderation_lists_from_db
 
-if not LOCAL_ENV:
-    import sys
-    sys.path.append('/opt') # to enable the import of common_src from the lambda layer
-
-
 table = None
 
-
-
 def main_handler(event, context):
+    global table
+
     # Get the discourse-provider-id from the query string
     discourse_provider_id = event['queryStringParameters']['discourse-provider-id']
 
     error_msgs = []
     try:
-        moderation_lists = extract_moderation_lists_from_db(table,discourse_provider_id)
+        moderation_lists = extract_moderation_lists_from_db(discourse_provider_id,QA_injected_table=table)
 
         # Return the successful response
         return {
@@ -60,6 +50,11 @@ def local_tasts():
     }
     table = MockDynamoDBTable([])
     res = main_handler(event, None)
+    if res['statusCode'] != 200:
+        for msg in res['body']['error_msgs']:
+            for line in msg.split('\n'):
+                print (line)
+
     assert res['statusCode'] == 200
     assert 'error_msgs' not in res['body']
 
@@ -90,13 +85,6 @@ def local_tasts():
     print ('All tests passed')
 
 
-
-if LOCAL_ENV:
-    os.environ['TABLE_NAME'] = 'moderation-lists'
-else:
-    # Initialize DynamoDB client
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ['TABLE_NAME'])  # The DynamoDB table name is stored in Lambda environment variables
 
 
 

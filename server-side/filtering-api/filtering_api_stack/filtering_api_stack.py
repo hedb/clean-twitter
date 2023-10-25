@@ -1,3 +1,4 @@
+import subprocess
 from aws_cdk import (
     # Duration,
     Stack,
@@ -11,6 +12,15 @@ class FilteringApiStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        get_available_moderation_lists_lambda_stack.GetAvailableModerationListsService(self, "get-available-moderation-lists")
 
-        # crosscheck_userids_vs_lists_lambda_stack.CrosscheckUserids_VS_ListsService(self, "crosscheck-userids-vs-lists")
+        result = subprocess.run(["flake8", "common_src"], capture_output=True, text=True)
+        if result.returncode != 0:
+            print("Linting errors detected:")
+            print(result.stdout)
+            raise Exception("Linter failed. Deployment halted.")
+
+        get_available_moderation_lists_lambda_stack.GetAvailableModerationListsService(
+            self, "get-available-moderation-lists")
+
+        # crosscheck_userids_vs_lists_lambda_stack.CrosscheckUserids_VS_ListsService(
+        #   self, "crosscheck-userids-vs-lists")
