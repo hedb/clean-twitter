@@ -38,4 +38,11 @@ class CrosscheckUserids_VS_ListsService(Construct):
         crosscheck_userids_vs_lists_lambda_integration = apigateway.LambdaIntegration(handler,
                 request_templates={"application/json": '{ "statusCode": "200" }'})
 
-        api.root.add_method("post", crosscheck_userids_vs_lists_lambda_integration) 
+        api.root.add_method("post", crosscheck_userids_vs_lists_lambda_integration)
+
+        api.root.add_cors_preflight(
+            allow_origins=["*"],
+            allow_methods=["GET", "POST", "OPTIONS"],
+            allow_headers=["*"],
+            max_age=cdk.Duration.days(10)
+        )

@@ -1,4 +1,5 @@
 import json
+import traceback
 import os
 
 import boto3
@@ -20,37 +21,57 @@ def isolate_blacklists(discourse_provider_id, id_list):
 
 
 def main_handler(event, context):
-    global moderation_list_table
-    global list_user_mapping
-
     try:
-        body = event
-        discourse_provider_id = body['discourse-provider-id']
-        user_ids = body['user_ids']
-        list_ids = body['list_ids']
-    except (KeyError, json.JSONDecodeError, Exception):
+        global moderation_list_table
+        global list_user_mapping
+
+        try:
+            body = json.loads(event['body'])
+            discourse_provider_id = body['discourse-provider-id']
+            user_ids = body['user_ids']
+            list_ids = body['list_ids']
+        except (KeyError, json.JSONDecodeError, Exception) as e:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Credentials": True
+                },
+                'body': json.dumps({
+                    'status': 'FAILED', 'error_msg': str(e),
+                    'excpetion': traceback.format_exc()
+                    # 'event': event
+                })
+            }
+
+        blacklists = isolate_blacklists(discourse_provider_id, list_ids)
+
+        blacklisted_users = []
+        for user_id in user_ids:
+            response = list_user_mapping_table.query(
+                KeyConditionExpression=Key('user_id').eq(user_id)
+            )
+            if response['Items']:
+                if any(item['list_id'] in blacklists for item in response['Items']):
+                    blacklisted_users.append(user_id)
+
         return {
-            'statusCode': 400,
-            'body': json.dumps({'status': 'FAILED', 'error_msg': 'Invalid input format'}),
-            'input_event': str(event),
-            'input_event_type': str(type(event))
+            'statusCode': 200,
+            'headers': {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": True
+            },
+            'body': json.dumps({'status': 'OK', 'blacklisted_users': blacklisted_users})
         }
-
-    blacklists = isolate_blacklists(discourse_provider_id, list_ids)
-
-    blacklisted_users = []
-    for user_id in user_ids:
-        response = list_user_mapping_table.query(
-            KeyConditionExpression=Key('user_id').eq(user_id)
-        )
-        if response['Items']:
-            if any(item['list_id'] in blacklists for item in response['Items']):
-                blacklisted_users.append(user_id)
-
-    return {
-        'statusCode': 200,
-        'body': json.dumps({'status': 'OK', 'blacklisted_users': blacklisted_users})
-    }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": True
+            },
+            'body': json.dumps({'status': 'FAILED', 'error_msg': str(e)})
+        }
 
 
 class MockDynamoDBTable:

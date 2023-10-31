@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21e2486c-7069-46fd-9952-e06b811603dd" name="Changes" comment="Working Layer deployment for one function">
-      <change afterPath="$PROJECT_DIR$/filtering_api_stack/common_lambda_layer_stack.py" afterDir="false" />
+    <list default="true" id="21e2486c-7069-46fd-9952-e06b811603dd" name="Changes" comment="App works with both">
+      <change afterPath="$PROJECT_DIR$/test_lambdas_client.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common_src/moderation_lists_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_src/moderation_lists_util.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py" beforeDir="false" afterPath="$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/filtering_api_stack/crosscheck_userids_vs_lists_lambda_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/crosscheck_userids_vs_lists_lambda_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api_stack/filtering_api_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/filtering_api_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/filtering_api_stack/get_available_moderation_lists_lambda_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_available_moderation_lists_lambda/lambda.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +176,8 @@
       <workItem from="1697479983362" duration="1245000" />
       <workItem from="1697651726561" duration="4032000" />
       <workItem from="1697812317567" duration="12829000" />
-      <workItem from="1698141674293" duration="22414000" />
+      <workItem from="1698141674293" duration="22714000" />
+      <workItem from="1698506619681" duration="5468000" />
     </task>
     <task id="LOCAL-00001" summary=".1">
       <option name="closed" value="true" />
@@ -262,7 +259,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698234134840</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="App works with both">
+      <option name="closed" value="true" />
+      <created>1698254588666</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1698254588666</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,7 +282,8 @@
     <MESSAGE value="Added cache to get moderation list" />
     <MESSAGE value="Sorted some ID issue" />
     <MESSAGE value="Working Layer deployment for one function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working Layer deployment for one function" />
+    <MESSAGE value="App works with both" />
+    <option name="LAST_COMMIT_MESSAGE" value="App works with both" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -289,17 +295,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py</url>
-          <line>84</line>
+          <line>105</line>
           <option name="timeStamp" value="42" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py</url>
-          <line>40</line>
+          <line>48</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crosscheck_userids_vs_lists_lambda/lambda.py</url>
-          <line>46</line>
+          <line>54</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
       </breakpoints>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Lambdas Client</title>
+</head>
+<body>
+
+<textarea id="inputPayload" rows="10" cols="50">
+{
+  "discourse-provider-id": "test-key",
+  "user_ids": [
+    "1",
+    "2",
+    "3"
+  ],
+  "list_ids": [
+    "blacklist1",
+    "2",
+    "3"
+  ]
+}
+</textarea>
+
+<button onclick="sendPayload()">Send Payload</button>
+
+<textarea id="outputResult" rows="10" cols="50"></textarea>
+
+<script>
+    function sendPayload() {
+        const url = "https://n6bg6n0b21.execute-api.eu-central-1.amazonaws.com/prod/";
+        const payload = JSON.parse(document.getElementById("inputPayload").value);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("outputResult").value = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById("outputResult").value = "Error: " + error;
+        });
+    }
+</script>
+
+</body>
+</html>
